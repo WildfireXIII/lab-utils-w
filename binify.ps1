@@ -18,3 +18,9 @@ param (
 if ($fileToBin -ne "") { Copy-Item $fileToBin "/dwl/tmp/bin/" }
 if ($list) { Get-ChildItem "/dwl/tmp/bin/" }
 if ($clear) { Remove-Item "/dwl/tmp/bin/*" }
+
+if ($fileToBin -eq "" -and !$list -and !$clear)
+{
+	echo "`nSends specified file to the temporary bin folder for quick testing/usage elsewhere, without having to go through the package system."
+	echo "`n`nUsage: `n`tbinify [path/name of script/runnable]`n`tbinify -list `t= displays all current contents of temporary bin`n`tbinify -clear `t= deletes all contents of temporary bin`n"
+}
