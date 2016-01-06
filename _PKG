@@ -1,0 +1,3 @@
+install=binify.ps1>$BIN_DIR
+remove=binify.ps1<$BIN_DIR
+data=NONE
