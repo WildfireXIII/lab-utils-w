@@ -16,7 +16,5 @@ param (
 )
 
 if ($fileToBin -ne "") { Copy-Item $fileToBin "/dwl/tmp/bin/" }
-
 if ($list) { Get-ChildItem "/dwl/tmp/bin/" }
-
-if ($clear) { Remove-Item "/dwl/tmp/bin/*"	}
+if ($clear) { Remove-Item "/dwl/tmp/bin/*" }
