@@ -87,9 +87,9 @@ if ($locs.$loc -eq $null)
 
 $destination = $locs[$loc]
 
-$plainFileName = "$((Get-Item `'$file`').Basename)"
+$plainFileName = "$((Get-Item $file).Basename)"
 $extension = ""
-if ($isFile) { $extension = "$((Get-Item `'$file`').Extension)" }
+if ($isFile) { $extension = "$((Get-Item $file).Extension)" }
 
 $date = "$(Get-Date -format M.d.yy)"
 
@@ -98,7 +98,10 @@ $destination += "\$plainFileName`_bak"
 
 # check if containing folder exists
 $containerExists = Test-Path "$destination"
-if (!$containerExists) { md $destination }
+if (!$containerExists) 
+{ 
+	md $destination | Out-Null
+}
 
 if ($isFile)
 {
@@ -133,6 +136,9 @@ if ($isFolder)
 
 	$finalFolderName = "$date`_$number"
 
-	copy $file "$destination\$finalFolderName\"
+	# create output folder
+	md "$destination\$finalFolderName" | Out-Null
+
+	copy -Container -Force -Recurse $file "$destination\$finalFolderName"
 	echo "Folder archived to '$destination\$finalFolderName'"
 }
