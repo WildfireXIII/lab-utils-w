@@ -1,7 +1,7 @@
 #*************************************************************
 #  File: bak.ps1
 #  Date created: 1/10/2016
-#  Date edited: 1/10/2016 
+#  Date edited: 1/11/2016 
 #  Author: Nathan Martindale
 #  Copyright © 2016 Digital Warrior Labs
 #  Description: Creates backup/date-archived copy of passed file/folder
@@ -47,13 +47,17 @@ if ($edit) { notepad $LOCS_FILE; exit }
 # check for if help needed 
 if ($file -eq "" -or $help -and !$list)
 {
-	echo "Help goes here!"
+	echo "`nCopy passed file or folder to a separate location in a date-archive system. (Stores each copy you make separately and dates it)"
+	echo "`nUsage:`n`tbak [FILE/FOLDER] = Archives file/folder to the default location`n`tbak -loc [LOCATION_SHORTCUT] [FILE/FOLDER] = Archives file/folder to specified loc`n`tbak -list = lists all location shortcuts`n`tbak -edit = opens up location shortcut data in notepad, allowing you to edit/add shortcuts`n`tbak -help = displays this help (duh)`n"
 	exit
 }
 
 # read in all locs
 $locs = @{}
 $locsFileContent = Get-Content -path $LOCS_FILE
+
+if ($list) { echo "" } # nice space!
+
 foreach ($line in $locsFileContent)
 {
 	$index = $line.IndexOf("=")
@@ -65,7 +69,7 @@ foreach ($line in $locsFileContent)
 	if ($list) { Write-Host "`t$key = `"$value`"" }
 }
 
-if ($list) { exit }
+if ($list) { echo ""; exit } # nice space!
 
 $destination = ""
 
@@ -119,8 +123,8 @@ if ($isFile)
 
 	$finalResultName = "$nameResultBase`_$number$extension"
 
-	copy $file "$destination\$fileResultName"
-	echo "File archived to '$destination\$fileResultName'"
+	copy $file "$destination\$finalResultName"
+	echo "File archived to '$destination\$finalResultName'"
 }
 if ($isFolder)
 {
