@@ -22,7 +22,7 @@ $LOCS_FILE = ""
 # Find all necessary files and folders
 $dataDirExists = Test-Path Env:\DATA_DIR
 if (!$dataDirExists) { $DATA_PATH = "." }
-else { $DATA_PATH = "$DATA_DIR\utils-w" }
+else { $DATA_PATH = "$env:DATA_DIR\utils-w" }
 
 $LOCS_FILE = "$DATA_PATH\baklocs.dat"
 $locsFileExists = Test-Path $LOCS_FILE
