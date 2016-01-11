@@ -16,12 +16,6 @@ param (
 	[switch]$list = $false
 )
 
-# need to have file for default backup location (which should be the skydrive)
-
-# check explicitly for data_dir environment variable, and if not set, then just use local folder ('.')
-
-# then check if the default/shortcut system has been set up, and if not, set it up
-
 $DATA_PATH = ""
 $LOCS_FILE = ""
 
@@ -29,8 +23,6 @@ $LOCS_FILE = ""
 $dataDirExists = Test-Path Env:\DATA_DIR
 if (!$dataDirExists) { $DATA_PATH = "." }
 else { $DATA_PATH = "$DATA_DIR\utils-w" }
-
-$DATA_PATH = "." # DEBUG ONLY
 
 $LOCS_FILE = "$DATA_PATH\baklocs.dat"
 $locsFileExists = Test-Path $LOCS_FILE
