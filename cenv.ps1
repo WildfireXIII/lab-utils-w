@@ -123,7 +123,7 @@ foreach (`$line in `$lines)
 	echo $scriptContent > "$name.ps1"
 
 	$editString = "$name.ps1"
-	if (!$noextra) { $editString += "input.dat" }
+	if (!$noextra) { $editString += " input.dat" }
 	gvim "$editString"
 }
 
