@@ -19,8 +19,6 @@ param (
 # helpful constants
 $DATA_DIR = $env:DATA_DIR
 
-$DATA_DIR = "./env" # DEBUG ONLY
-
 # get path to _env
 $ENV_PATH = ""
 $ENV_PATH_FILE = "$DATA_DIR\utils-w\cenvpath.dat"
