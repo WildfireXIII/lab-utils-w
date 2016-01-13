@@ -11,6 +11,8 @@ param (
 	[Parameter(Position=1)]
 	[string]$name = "",
 	[string]$type = "",
+	[switch]$here = $false, # doesn't create env folder in _env, just code file template
+	[switch]$noextra = $false, # depending on type, either disincludes compiler/input file
 	[switch]$help = $false
 )
 
@@ -42,25 +44,28 @@ if ($name -eq "" -or $help)
 	exit
 }
 
-# create the project directory
-echo "Creating directory '$ENV_PATH\$name'..."
-md "$ENV_PATH\$name" | Out-Null
-cd "$ENV_PATH\$name" | Out-Null
+# create the project directory (if applicable)
+if (!$here)
+{
+	echo "Creating directory '$ENV_PATH\$name'..."
+	md "$ENV_PATH\$name" | Out-Null
+	cd "$ENV_PATH\$name" | Out-Null
+}
 
 # current date
 $currentDate = Get-Date -format %M/%d/yyyy
 
 if ($type -eq "cpp")
 {
-	echo "Setting up folder as c++ project..."
+	echo "Setting up c++ files..."
 
 	# get library path
 	$LIB_DIR = $env:LIB_DIR
 
 	# create default files
-	$buildContent = "@echo off`ncall cl $name.cpp /I $LIB_DIR /EHsc /Fe$name /w`necho -------------------- PROGRAM RUN --------------------`n$name.exe" 
+	$buildContent = "@echo off`ncall cl *.cpp /I $LIB_DIR /EHsc /Fe$name /w`necho -------------------- PROGRAM RUN --------------------`n$name.exe" 
 	
-	$buildContent | Out-File -encoding ASCII -FilePath "build.bat" # done using encoding due to >> operators not using the right encoding
+	if (!$noextra) { $buildContent | Out-File -encoding ASCII -FilePath "build.bat" } # done using encoding due to >> operators not using the right encoding 
 
 	$cppContent = @"
 //*************************************************************
@@ -88,10 +93,10 @@ int main()
 
 if ($type -eq "ps1")
 {
-	echo "Setting up folder as ps1 project..."
+	echo "Setting up ps1 files..."
 
 	$dataContent = "Hello world!`nFrom data file!"
-	echo $dataContent > input.dat
+	if (!$noextra) { echo $dataContent > input.dat }
 
 	$scriptContent = @"
 #*************************************************************
@@ -119,7 +124,47 @@ foreach (`$line in `$lines)
 	gvim "$name.ps1" "input.dat"
 }
 
+# TODO: Anything need to be done with library/jar folders?
+if ($type -eq "java")
+{
+	echo "Setting up java files..."
+	
+	$compilerContent = @"
+@echo off
+javac *.java
+java $name
+"@
 
+	if (!$noextra) { $compilerContent | Out-File -encoding ASCII -FilePath "build.bat" }
 
+	$javaContent = @"
+//*************************************************************
+//  File: $name.java
+//  Date created: $currentDate
+//  Date edited: $currentDate
+//  Author: Nathan Martindale
+//  Copyright © 2016 Digital Warrior Labs
+//  Description: 
+//*************************************************************
 
-echo "Project successfully set up!"
+import java.io.*;
+import java.util.*;
+
+public class $name
+{
+	public static void main(String[] args)
+	{
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+
+		System.out.println("Enter name:");
+		String name = "";
+		try { name = in.readLine(); } catch (IOException e) { }
+		System.out.println("Hello " + name + "!");
+	}
+}
+"@
+	$javaContent | Out-File -encoding ASCII -FilePath "$name.java"
+	gvim "$name.java"
+}
+
+echo "Environment successfully created!"
