@@ -34,7 +34,6 @@ if (!$envPathFileExists)
 
 $envPathFileContent = Get-Content -path $ENV_PATH_FILE
 $ENV_PATH = $envPathFileContent
-echo "envpath: $ENV_PATH" # DEBUG
 
 # check for nothing passed or help
 if ($name -eq "" -or $help)
@@ -48,15 +47,15 @@ echo "Creating directory '$ENV_PATH\$name'..."
 md "$ENV_PATH\$name" | Out-Null
 cd "$ENV_PATH\$name" | Out-Null
 
+# current date
+$currentDate = Get-Date -format %M/%d/yyyy
+
 if ($type -eq "cpp")
 {
 	echo "Setting up folder as c++ project..."
 
 	# get library path
 	$LIB_DIR = $env:LIB_DIR
-
-	# current date
-	$currentDate = Get-Date -format %M/%d/yyyy
 
 	# create default files
 	$buildContent = "@echo off`ncall cl $name.cpp /I $LIB_DIR /EHsc /Fe$name /w`necho -------------------- PROGRAM RUN --------------------`n$name.exe" 
@@ -84,7 +83,43 @@ int main()
 }
 "@
 	echo $cppContent > "$name.cpp"
-
-	echo "Project successfully set up!"
 	gvim "$name.cpp"
 }
+
+if ($type -eq "ps1")
+{
+	echo "Setting up folder as ps1 project..."
+
+	$dataContent = "Hello world!`nFrom data file!"
+	echo $dataContent > input.dat
+
+	$scriptContent = @"
+#*************************************************************
+#  File: $name.ps1
+#  Date created: $currentDate
+#  Date edited: $currentDate
+#  Author: Nathan Martindale
+#  Copyright © 2016 Digital Warrior Labs
+#  Description: 
+#*************************************************************
+
+param (
+	[Parameter(Position=1)]
+	[string]`$inputThing = ""
+)
+
+`$lines = Get-Content input.dat
+
+foreach (`$line in `$lines)
+{
+	Write-Host `$line
+}
+"@
+	echo $scriptContent > "$name.ps1"
+	gvim "$name.ps1" "input.dat"
+}
+
+
+
+
+echo "Project successfully set up!"
