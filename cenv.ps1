@@ -39,7 +39,7 @@ $ENV_PATH = $envPathFileContent
 if ($name -eq "" -or $help)
 {
 	echo "`nQuickly creates either a full testing environment, or sets up a template code file with an optional compiler."
-	echo "`nUsage: `n`tcenv -type [TYPE] [NAME] = creates a new folder NAME in the set _env folder path, and adds code file templates for the given TYPE`n`tcenv -type [TYPE] [NAME] -here = inserts code file templates for given TYPE in the current folder`n`tcenv -type [TYPE] [NAME] [-here] -noextra = same result as two above commands, but does NOT include compiler/data file (if creating multiple code files for instance, you don't want to regenerate compiler each time)`n`tcenv -help = shows this help. duh."
+	echo "`nUsage: `n`tcenv -type [TYPE] [NAME] = creates a new folder NAME in the set _env folder path, and adds code file templates for the given TYPE`n`tcenv -type [TYPE] [NAME] -here = inserts code file templates for given TYPE in the current folder`n`tcenv -type [TYPE] [NAME] [-here] -noextra = does NOT include compiler/data file`n`tcenv -help = shows this help. duh."
 	echo "`nAvailable types: cpp, ps1, java`n"
 	exit
 }
