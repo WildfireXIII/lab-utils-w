@@ -27,7 +27,7 @@ $ENV_PATH_FILE = "$DATA_DIR\utils-w\cenvpath.dat"
 $envPathFileExists = Test-Path $ENV_PATH_FILE 
 
 # create path file if it doesn't exist
-if (!$envPathFileExists)
+if (!$envPathFileExists -and !$here)
 {
 	Write-Host "ERROR: _env folder path not found" -ForegroundColor Red
 	$envPath = Read-Host -prompt "Please enter path to _env folder"
@@ -121,7 +121,10 @@ foreach (`$line in `$lines)
 }
 "@
 	echo $scriptContent > "$name.ps1"
-	gvim "$name.ps1" "input.dat"
+
+	$editString = "$name.ps1"
+	if (!$noextra) { $editString += "input.dat" }
+	gvim "$editString"
 }
 
 # TODO: Anything need to be done with library/jar folders?
@@ -164,6 +167,7 @@ public class $name
 }
 "@
 	$javaContent | Out-File -encoding ASCII -FilePath "$name.java"
+
 	gvim "$name.java"
 }
 
