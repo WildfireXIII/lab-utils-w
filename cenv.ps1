@@ -1,7 +1,7 @@
 #*************************************************************
 #  File: cenv.ps1
 #  Date created: 1/12/2016
-#  Date edited: 1/12/2016
+#  Date edited: 1/18/2016
 #  Author: Nathan Martindale
 #  Copyright © 2016 Digital Warrior Labs
 #  Description: Script to quickly set up a testing environment
@@ -89,6 +89,94 @@ int main(int argc, char* argv[])
 "@
 	echo $cppContent > "$name.cpp"
 	gvim "$name.cpp"
+}
+
+if ($type -eq "libcpp")
+{
+	echo "Setting up c++ files..."
+
+	# get library path
+	$LIB_DIR = $env:LIB_DIR
+
+	# create directory structure
+	md src,env,bin
+
+	# create default files
+	$buildContent = "@echo off`npushd `"..\bin`"`ncall cl `"..\src\*.cpp`" `"..\env\*.cpp`" /I $LIB_DIR /EHsc /FeTesting /w`ncopy `".\Testing.exe`" `"..\env\Testing.exe`"`npopd`necho -------------------- PROGRAM RUN --------------------`nTesting.exe" 
+	
+	if (!$noextra) { $buildContent | Out-File -encoding ASCII -FilePath "env\build.bat" } # done using encoding due to >> operators not using the right encoding 
+
+	$hContent = @"
+//*************************************************************
+//  File: $name.h
+//  Date created: $currentDate
+//  Date edited: $currentDate
+//  Author: Nathan Martindale
+//  Copyright © 2016 Digital Warrior Labs
+//  Description: 
+//*************************************************************
+
+#include <iostream>
+
+using namespace std;
+
+class $name
+{
+	private:
+
+	public:
+		void test();
+};
+"@
+
+	$cppContent = @"
+//*************************************************************
+//  File: $name.cpp
+//  Date created: $currentDate
+//  Date edited: $currentDate
+//  Author: Nathan Martindale
+//  Copyright © 2016 Digital Warrior Labs
+//  Description: 
+//*************************************************************
+
+#include "$name.h"
+
+using namespace std;
+
+void $name::test()
+{
+	cout << "Hello world!" << endl;
+}
+"@
+
+	$testContent = @"
+//*************************************************************
+//  File: Testing.cpp
+//  Date created: $currentDate
+//  Date edited: $currentDate
+//  Author: Nathan Martindale
+//  Copyright © 2016 Digital Warrior Labs
+//  Description: 
+//*************************************************************
+
+#include <iostream>
+#include "../src/$name.h"
+
+using namespace std;
+
+int main(int argc, char* argv[])
+{
+	$name* obj = new $name();
+	obj->test();
+	
+	return 0;
+}
+"@
+
+	echo $cppContent > "src\$name.cpp"
+	echo $hContent > "src\$name.h"
+	echo $testContent > "env\Testing.cpp"
+	gvim "src/*.cpp" "src/*.h" "env/*.cpp"
 }
 
 if ($type -eq "ps1")
